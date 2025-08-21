@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ONUSHILON — Competitive Exam MVP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <!-- Name Overlay -->
+  <div id="name-overlay" class="overlay visible">
+    <div class="overlay-card">
+      <h1>Welcome to ONUSHILON</h1>
+      <p>Enter your player name or skip to use “Shahriar”.</p>
+      <div class="name-row">
+        <input id="name-input" type="text" placeholder="Your name"/>
+        <button id="save-name" class="btn primary">Save</button>
+      </div>
+      <button id="skip-name" class="btn subtle">Skip → Shahriar</button>
+    </div>
+  </div>
+
+  <!-- Subject Select Modal -->
+  <div id="subject-modal" class="overlay">
+    <div class="overlay-card">
+      <h2>Select Subject</h2>
+      <div class="subject-grid">
+        <button class="subject-card" data-subject="physics" data-color="#69c1ff">
+          <span class="subject-dot" style="background:#69c1ff;"></span>
+          Physics
+        </button>
+        <button class="subject-card" data-subject="chemistry" data-color="#b69cff">
+          <span class="subject-dot" style="background:#b69cff;"></span>
+          Chemistry
+        </button>
+        <button class="subject-card" data-subject="biology" data-color="#84d993">
+          <span class="subject-dot" style="background:#84d993;"></span>
+          Biology
+        </button>
+      </div>
+      <button id="cancel-subject" class="btn subtle">Cancel</button>
+    </div>
+  </div>
+
+  <header class="app-header">
+    <div class="brand">
+      <div class="logo">O</div>
+      <div class="brand-text">ONUSHILON</div>
+    </div>
+    <nav class="nav">
+      <button class="tab-btn active" data-view="home">Home</button>
+      <button class="tab-btn" data-view="ranks">Ranks</button>
+      <button class="tab-btn" data-view="leaderboard">Leaderboard</button>
+    </nav>
+    <button id="profile-chip" class="profile-chip" data-view="profile">
+      <span id="chip-name">Player</span>
+      <span id="chip-rank" class="rank-badge">Bronze</span>
+    </button>
+  </header>
+
+  <main class="app-main">
+    <!-- Home View -->
+    <section id="home" class="view visible">
+      <h2>Choose a Mode</h2>
+      <div class="mode-grid">
+        <div class="mode-card">
+          <h3>Casual Quiz</h3>
+          <p>Practice without a timer. Great for warm-up.</p>
+          <button class="btn primary start-mode" data-mode="casual">Start</button>
+        </div>
+        <div class="mode-card">
+          <h3>Solo Timed</h3>
+          <p>10 questions • 5-minute timer. Beat the clock.</p>
+          <button class="btn primary start-mode" data-mode="timed">Start</button>
+        </div>
+        <div class="mode-card">
+          <h3>Competitive vs Bot</h3>
+          <p>Simulated PvP. 10 questions • 5-minute timer.</p>
+          <button class="btn primary start-mode" data-mode="competitive">Start</button>
+        </div>
+      </div>
+
+      <div class="stats-summary">
+        <h3>Your Quick Stats</h3>
+        <div class="stat-row">
+          <div class="stat">
+            <div class="stat-label">Quizzes</div>
+            <div id="stat-quizzes" class="stat-value">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Accuracy</div>
+            <div id="stat-accuracy" class="stat-value">0%</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Wins</div>
+            <div id="stat-wins" class="stat-value">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Win Rate</div>
+            <div id="stat-winrate" class="stat-value">0%</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ranks View -->
+    <section id="ranks" class="view">
+      <h2>Rank Tiers</h2>
+      <p>Ranks are based on your local performance: wins, accuracy, and activity.</p>
+      <ul class="ranks-list">
+        <li><span class="rank-badge">Bronze</span> Starter rank for new players.</li>
+        <li><span class="rank-badge silver">Silver</span> Solid fundamentals. Keep pushing.</li>
+        <li><span class="rank-badge gold">Gold</span> Strong accuracy and consistency.</li>
+        <li><span class="rank-badge plat">Platinum</span> High win rate and speed.</li>
+        <li><span class="rank-badge diamond">Diamond</span> Elite performance locally.</li>
+        <li><span class="rank-badge master">Master</span> Legendary status.</li>
+      </ul>
+      <p class="muted">Note: This MVP uses local stats only (no real matchmaking or global MMR).</p>
+    </section>
+
+    <!-- Leaderboard View (Demo/Static) -->
+    <section id="leaderboard" class="view">
+      <h2>Global Leaderboard (Demo)</h2>
+      <p class="muted">This is demo data for UI. A real global board needs a backend.</p>
+      <div class="board">
+        <div class="board-row board-header">
+          <div>#</div><div>Name</div><div>Rank</div><div>Score</div>
+        </div>
+        <div class="board-row"><div>1</div><div>AstralAce</div><div>Master</div><div>1980</div></div>
+        <div class="board-row"><div>2</div><div>NitroNova</div><div>Diamond</div><div>1540</div></div>
+        <div class="board-row"><div>3</div><div>BioBurst</div><div>Platinum</div><div>1210</div></div>
+        <div class="board-row"><div>4</div><div>Quantikid</div><div>Gold</div><div>980</div></div>
+        <div class="board-row"><div>5</div><div>ChemChamp</div><div>Silver</div><div>720</div></div>
+      </div>
+    </section>
+
+    <!-- Profile View -->
+    <section id="profile" class="view">
+      <h2>Your Profile</h2>
+      <div class="profile-card">
+        <div class="profile-line">
+          <label>Name</label>
+          <input id="profile-name" type="text" />
+          <button id="save-profile-name" class="btn">Save</button>
+        </div>
+        <div class="profile-line">
+          <label>Current Rank</label>
+          <span id="profile-rank" class="rank-badge">Bronze</span>
+        </div>
+        <div class="profile-stats">
+          <div class="stat">
+            <div class="stat-label">Quizzes</div>
+            <div id="p-quizzes" class="stat-value">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Questions</div>
+            <div id="p-questions" class="stat-value">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Correct</div>
+            <div id="p-correct" class="stat-value">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Accuracy</div>
+            <div id="p-accuracy" class="stat-value">0%</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Wins</div>
+            <div id="p-wins" class="stat-value">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Win Rate</div>
+            <div id="p-winrate" class="stat-value">0%</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Score</div>
+            <div id="p-score" class="stat-value">0</div>
+          </div>
+        </div>
+        <p class="muted">Score is a local metric for rank progression.</p>
+        <div class="profile-links">
+          <a href="#" class="link" data-view="ranks">See Ranks</a>
+          <a href="#" class="link" data-view="leaderboard">See Leaderboard (Demo)</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quiz View -->
+    <section id="quiz" class="view">
+      <div class="quiz-header">
+        <div class="crumbs"><span id="quiz-mode-label">Mode</span> • <span id="quiz-subject-label">Subject</span></div>
+        <div class="timer" id="quiz-timer">--:--</div>
+      </div>
+
+      <div id="versus-bar" class="versus hidden">
+        <div class="vs-item you">
+          <div>You</div>
+          <div class="vs-score"><span id="you-score">0</span>/10</div>
+        </div>
+        <div class="vs-item bot">
+          <div>Bot</div>
+          <div class="vs-score"><span id="bot-score">0</span>/10</div>
+        </div>
+      </div>
+
+      <div id="question-card" class="question-card">
+        <div id="q-progress" class="q-progress">Question 1 of 10</div>
+        <div id="q-text" class="q-text">...</div>
+        <div id="q-options" class="q-options"></div>
+        <div class="q-actions">
+          <button id="next-btn" class="btn" disabled>Next</button>
+          <button id="finish-btn" class="btn danger hidden">Finish</button>
+        </div>
+      </div>
+
+      <div id="result-card" class="result-card hidden">
+        <h3 id="result-title">Results</h3>
+        <p id="result-detail"></p>
+        <div class="result-stats">
+          <div><strong>Your correct:</strong> <span id="result-you">0</span></div>
+          <div class="vs-only"><strong>Bot correct:</strong> <span id="result-bot">0</span></div>
+          <div><strong>Time used:</strong> <span id="result-time">0:00</span></div>
+        </div>
+        <div class="result-actions">
+          <button id="play-again" class="btn primary">Play Again</button>
+          <button class="btn" data-view="home">Home</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

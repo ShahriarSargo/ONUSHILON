@@ -1,0 +1,147 @@
+:root{
+  --bg:#0f1220;
+  --card:#171a2b;
+  --muted:#8b90a5;
+  --text:#ebedf5;
+  --accent:#69c1ff; /* updated per subject */
+  --accent-weak: color-mix(in oklab, var(--accent) 20%, white 80%);
+  --danger:#ff6b6b;
+  --success:#74d99f;
+}
+
+*{ box-sizing:border-box; }
+html,body{ margin:0; padding:0; height:100%; }
+body{
+  font-family:'Rajdhani', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, #2a2f57 0%, transparent 60%),
+    radial-gradient(1200px 600px at 100% 0%, #1b1e3a 0%, transparent 60%),
+    var(--bg);
+}
+
+/* Overlay */
+.overlay{
+  position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+  background:rgba(0,0,0,.6);
+  opacity:0; pointer-events:none; transition:opacity .25s ease;
+  z-index:50;
+}
+.overlay.visible{ opacity:1; pointer-events:auto; }
+.overlay-card{
+  background:var(--card); border:1px solid #2a2e46; border-radius:14px; padding:28px; width:min(92vw,560px);
+  box-shadow:0 10px 40px rgba(0,0,0,.35);
+}
+.overlay-card h1, .overlay-card h2{ margin:0 0 8px; letter-spacing:.5px; }
+.overlay-card p{ margin:0 0 16px; color:var(--muted); }
+.name-row{ display:flex; gap:10px; margin-bottom:12px; }
+.name-row input{
+  flex:1; background:#0f1220; color:var(--text); border:1px solid #2a2e46; border-radius:10px; padding:12px 14px;
+}
+
+/* Header */
+.app-header{
+  position:sticky; top:0; z-index:10; display:flex; align-items:center; justify-content:space-between;
+  padding:12px 16px; background:rgba(15,18,32,.7); backdrop-filter: blur(6px); border-bottom:1px solid #1e2340;
+}
+.brand{ display:flex; align-items:center; gap:10px; }
+.logo{
+  width:34px; height:34px; border-radius:8px; background:var(--accent); color:#0f1220;
+  display:grid; place-items:center; font-weight:800;
+}
+.brand-text{ font-weight:700; letter-spacing:1px; }
+.nav{ display:flex; gap:8px; }
+.tab-btn{
+  background:transparent; border:1px solid #2a2e46; color:var(--text);
+  padding:8px 12px; border-radius:10px; cursor:pointer; transition:all .2s ease;
+}
+.tab-btn.active, .tab-btn:hover{ border-color:var(--accent); color:var(--accent); }
+
+.profile-chip{
+  display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:12px;
+  background:#12162a; border:1px solid #2a2e46; cursor:pointer;
+}
+.rank-badge{
+  background:var(--accent-weak); color:#0b0f1e; padding:2px 8px; border-radius:999px; font-weight:700;
+}
+.rank-badge.silver{ background:#cfd8ff; }
+.rank-badge.gold{ background:#ffd666; }
+.rank-badge.plat{ background:#7de2d1; }
+.rank-badge.diamond{ background:#89e0ff; }
+.rank-badge.master{ background:#ff9acb; }
+
+/* Main layout */
+.app-main{ padding:24px 16px 64px; width:min(1000px, 92vw); margin:0 auto; }
+.view{ display:none; animation:fadeIn .25s ease; }
+.view.visible{ display:block; }
+@keyframes fadeIn{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:none;} }
+
+/* Cards and buttons */
+.mode-grid{ display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:14px; }
+.mode-card, .profile-card, .question-card, .result-card, .stats-summary{
+  background:var(--card); border:1px solid #2a2e46; border-radius:16px; padding:18px;
+}
+.mode-card h3{ margin:0 0 6px; }
+.mode-card p{ margin:0 0 12px; color:var(--muted); }
+
+.btn{
+  background:#11152b; color:var(--text); border:1px solid #2a2e46; border-radius:10px;
+  padding:10px 14px; cursor:pointer; transition:all .2s ease;
+}
+.btn:hover{ border-color:var(--accent); color:var(--accent); }
+.btn.primary{ background:var(--accent); color:#0b0f1e; border-color:transparent; font-weight:700; }
+.btn.primary:hover{ filter:brightness(1.05); }
+.btn.subtle{ background:transparent; color:var(--muted); border-color:#2a2e46; }
+.btn.danger{ background:var(--danger); color:#fff; border-color:transparent; }
+
+.link{ color:var(--accent); text-decoration:none; }
+.link:hover{ text-decoration:underline; }
+
+.stats-summary{ margin-top:18px; }
+.stat-row, .profile-stats{ display:grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); gap:10px; }
+.stat .stat-label{ color:var(--muted); }
+.stat .stat-value{ font-size:1.4rem; font-weight:700; }
+
+/* Ranks view */
+.ranks-list{ list-style:none; padding:0; margin:12px 0; }
+.ranks-list li{ margin:8px 0; display:flex; align-items:center; gap:10px; }
+.muted{ color:var(--muted); }
+
+/* Leaderboard */
+.board{ margin-top:12px; border:1px solid #2a2e46; border-radius:12px; overflow:hidden; }
+.board-row{ display:grid; grid-template-columns:40px 1fr 140px 100px; gap:10px; padding:10px 12px; align-items:center; }
+.board-header{ background:#12162a; color:var(--muted); font-weight:700; border-bottom:1px solid #2a2e46; }
+.board-row:nth-child(even){ background:#141833; }
+
+/* Profile */
+.profile-card{ display:flex; flex-direction:column; gap:12px; }
+.profile-line{ display:flex; gap:10px; align-items:center; }
+.profile-line label{ width:140px; color:var(--muted); }
+.profile-links{ display:flex; gap:12px; }
+
+/* Quiz */
+.quiz-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.crumbs{ color:var(--muted); }
+.timer{ font-weight:700; font-size:1.2rem; }
+
+.versus{ display:flex; gap:14px; margin-bottom:12px; }
+.versus.hidden{ display:none; }
+.vs-item{ flex:1; background:#12162a; border:1px solid #2a2e46; border-radius:12px; padding:10px; display:flex; align-items:center; justify-content:space-between; }
+.vs-item.you .vs-score{ color:var(--accent); font-weight:700; }
+.vs-item.bot .vs-score{ color:#ffb7b7; font-weight:700; }
+
+.q-progress{ color:var(--muted); margin-bottom:6px; }
+.q-text{ font-size:1.2rem; font-weight:700; margin-bottom:12px; }
+.q-options{ display:grid; gap:8px; }
+.q-option{
+  text-align:left; width:100%;
+  background:#11152b; border:1px solid #2a2e46; color:var(--text);
+  padding:10px 12px; border-radius:10px; cursor:pointer; transition:all .15s ease;
+}
+.q-option:hover{ border-color:var(--accent); }
+.q-option.selected{ outline:2px solid var(--accent); }
+.q-option.correct{ background:#0e2a1a; border-color:#1d6b42; }
+.q-option.incorrect{ background:#2a1111; border-color:#6b1d1d; }
+
+.q-actions{ display:flex; gap:10px; margin-top:12px; }
+.hidden{ display:none !important; }
