@@ -3,227 +3,287 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ONUSHILON — Competitive Exam</title>
+  <title>ONUSHILON — Premium Exam Platform</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
-  <div class="background-elements">
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="blob blob-3"></div>
-  </div>
+
+  <div class="ambient-glow"></div>
 
   <div id="name-overlay" class="overlay visible">
-    <div class="overlay-card glass-panel">
-      <h1>Welcome to ONUSHILON</h1>
-      <p>Enter your player name to begin your journey.</p>
-      <div class="name-row">
-        <input id="name-input" type="text" placeholder="Your name" autocomplete="off"/>
-        <button id="save-name" class="btn primary">Save</button>
+    <div class="modal-card glass-panel animate-pop">
+      <div class="modal-header">
+        <h1>Welcome to Onushilon</h1>
+        <p>Enter your details to synchronize your local session profile.</p>
       </div>
-      <button id="skip-name" class="btn subtle">Skip → Use "Shahriar"</button>
+      <div class="name-form">
+        <input id="name-input" type="text" placeholder="Enter your name" autocomplete="off" class="modern-input"/>
+        <button id="save-name" class="btn btn-primary">Continue</button>
+      </div>
+      <button id="skip-name" class="btn btn-link">Skip and use default profile</button>
     </div>
   </div>
 
   <div id="subject-modal" class="overlay">
-    <div class="overlay-card glass-panel">
-      <h2>Select Subject</h2>
-      <div class="subject-grid">
-        <button class="subject-card glass-button" data-subject="physics">
-          <span class="subject-dot" style="background:var(--color-physics); box-shadow: 0 0 10px var(--color-physics);"></span>
-          Physics
+    <div class="modal-card glass-panel animate-pop">
+      <div class="modal-header">
+        <h2>Select Discipline</h2>
+        <p>Choose a field of study to initialize your questionnaire.</p>
+      </div>
+      <div class="subject-stack">
+        <button class="subject-tile glass-clickable" data-subject="physics">
+          <div class="dot-indicator physics-dot"></div>
+          <div class="tile-details">
+            <span class="tile-title">Physics</span>
+            <span class="tile-desc">Mechanics, optics, and fundamental laws</span>
+          </div>
         </button>
-        <button class="subject-card glass-button" data-subject="chemistry">
-          <span class="subject-dot" style="background:var(--color-chemistry); box-shadow: 0 0 10px var(--color-chemistry);"></span>
-          Chemistry
+        <button class="subject-tile glass-clickable" data-subject="chemistry">
+          <div class="dot-indicator chemistry-dot"></div>
+          <div class="tile-details">
+            <span class="tile-title">Chemistry</span>
+            <span class="tile-desc">Organic paths, structures, and reactions</span>
+          </div>
         </button>
-        <button class="subject-card glass-button" data-subject="biology">
-          <span class="subject-dot" style="background:var(--color-biology); box-shadow: 0 0 10px var(--color-biology);"></span>
-          Biology
+        <button class="subject-tile glass-clickable" data-subject="biology">
+          <div class="dot-indicator biology-dot"></div>
+          <div class="tile-details">
+            <span class="tile-title">Biology</span>
+            <span class="tile-desc">Cellular systems, anatomy, and genetics</span>
+          </div>
         </button>
       </div>
-      <button id="cancel-subject" class="btn subtle mt-3">Cancel</button>
+      <button id="cancel-subject" class="btn btn-link mt-4">Cancel selection</button>
     </div>
   </div>
 
-  <header class="app-header glass-panel flat-top">
-    <div class="brand">
-      <div class="logo">O</div>
-      <div class="brand-text">ONUSHILON</div>
+  <header class="app-navbar glass-panel">
+    <div class="nav-left">
+      <div class="app-logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <span class="logo-text">ONUSHILON</span>
     </div>
-    <nav class="nav">
-      <button class="tab-btn active" data-view="home">Home</button>
-      <button class="tab-btn" data-view="ranks">Ranks</button>
+    <nav class="nav-tabs">
+      <button class="tab-btn active" data-view="home">Dashboard</button>
+      <button class="tab-btn" data-view="ranks">Tiers</button>
       <button class="tab-btn" data-view="leaderboard">Leaderboard</button>
     </nav>
-    <button id="profile-chip" class="profile-chip glass-button" data-view="profile">
-      <span id="chip-name">Player</span>
-      <span id="chip-rank" class="rank-badge">Bronze</span>
-    </button>
+    <div class="nav-right">
+      <button id="profile-chip" class="profile-pill glass-clickable" data-view="profile">
+        <span id="chip-name" class="truncate">Player</span>
+        <span id="chip-rank" class="badge-tier tier-bronze">Bronze</span>
+      </button>
+    </div>
   </header>
 
-  <main class="app-main">
-    <section id="home" class="view visible">
-      <h2 class="section-title">Choose a Mode</h2>
-      <div class="mode-grid">
-        <div class="mode-card glass-panel interactive">
-          <h3>Casual Quiz</h3>
-          <p>Practice without a timer. Great for warm-up.</p>
-          <button class="btn primary start-mode" data-mode="casual">Start</button>
+  <main class="main-container">
+
+    <section id="home" class="view-panel visible">
+      <div class="view-header">
+        <h2>Choose Evaluation Mode</h2>
+        <p>Test your knowledge under varying conditions and metrics.</p>
+      </div>
+      
+      <div class="cards-grid">
+        <div class="mode-card glass-panel">
+          <div class="card-meta">Untimed</div>
+          <h3>Casual Practice</h3>
+          <p>No timers, no penalties. Perfect for stress-free learning and review.</p>
+          <button class="btn btn-secondary start-mode w-full" data-mode="casual">Launch Practice</button>
         </div>
-        <div class="mode-card glass-panel interactive">
+        <div class="mode-card glass-panel feature-card">
+          <div class="card-meta highlight">Standardized</div>
           <h3>Solo Timed</h3>
-          <p>10 questions • 5-minute timer. Beat the clock.</p>
-          <button class="btn primary start-mode" data-mode="timed">Start</button>
+          <p>10 calibrated questions packed inside a rigorous 5-minute window.</p>
+          <button class="btn btn-primary start-mode w-full" data-mode="timed">Start Assessment</button>
         </div>
-        <div class="mode-card glass-panel interactive">
-          <h3>Competitive vs Bot</h3>
-          <p>Simulated PvP. 10 questions • 5-minute timer.</p>
-          <button class="btn primary start-mode" data-mode="competitive">Start</button>
+        <div class="mode-card glass-panel">
+          <div class="card-meta">Simulated pvp</div>
+          <h3>Competitive Bot</h3>
+          <p>Go head-to-head live against an automated algorithmic opponent.</p>
+          <button class="btn btn-secondary start-mode w-full" data-mode="competitive">Enter Arena</button>
         </div>
       </div>
 
-      <div class="stats-summary glass-panel mt-4">
-        <h3>Your Quick Stats</h3>
-        <div class="stat-row">
-          <div class="stat">
-            <div class="stat-label">Quizzes</div>
-            <div id="stat-quizzes" class="stat-value text-gradient">0</div>
+      <div class="dashboard-stats-card glass-panel mt-5">
+        <h4>Performance Overview</h4>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <span class="stat-heading">Completed Sessions</span>
+            <span id="stat-quizzes" class="stat-metric">0</span>
           </div>
-          <div class="stat">
-            <div class="stat-label">Accuracy</div>
-            <div id="stat-accuracy" class="stat-value text-gradient">0%</div>
+          <div class="stat-box">
+            <span class="stat-heading">Mean Accuracy</span>
+            <span id="stat-accuracy" class="stat-metric">0%</span>
           </div>
-          <div class="stat">
-            <div class="stat-label">Wins</div>
-            <div id="stat-wins" class="stat-value text-gradient">0</div>
+          <div class="stat-box">
+            <span class="stat-heading">Arena Victories</span>
+            <span id="stat-wins" class="stat-metric">0</span>
           </div>
-          <div class="stat">
-            <div class="stat-label">Win Rate</div>
-            <div id="stat-winrate" class="stat-value text-gradient">0%</div>
+          <div class="stat-box">
+            <span class="stat-heading">Win Ratio</span>
+            <span id="stat-winrate" class="stat-metric">0%</span>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="ranks" class="view">
-      <div class="glass-panel">
-        <h2 class="section-title">Rank Tiers</h2>
-        <p>Ranks are based on your local performance: wins, accuracy, and activity.</p>
-        <ul class="ranks-list">
-          <li><span class="rank-badge bronze">Bronze</span> Starter rank for new players.</li>
-          <li><span class="rank-badge silver">Silver</span> Solid fundamentals. Keep pushing.</li>
-          <li><span class="rank-badge gold">Gold</span> Strong accuracy and consistency.</li>
-          <li><span class="rank-badge plat">Platinum</span> High win rate and speed.</li>
-          <li><span class="rank-badge diamond">Diamond</span> Elite performance locally.</li>
-          <li><span class="rank-badge master">Master</span> Legendary status.</li>
-        </ul>
-        <p class="muted mt-3">Note: This MVP uses local stats only (no real matchmaking or global MMR).</p>
-      </div>
-    </section>
-
-    <section id="leaderboard" class="view">
-      <div class="glass-panel">
-        <h2 class="section-title">Global Leaderboard (Demo)</h2>
-        <p class="muted mb-3">This is demo data for UI. A real global board needs a backend.</p>
-        <div class="board glass-inner">
-          <div class="board-row board-header">
-            <div>#</div><div>Name</div><div>Rank</div><div>Score</div>
-          </div>
-          <div class="board-row"><div>1</div><div>AstralAce</div><div><span class="rank-badge master">Master</span></div><div>1980</div></div>
-          <div class="board-row"><div>2</div><div>NitroNova</div><div><span class="rank-badge diamond">Diamond</span></div><div>1540</div></div>
-          <div class="board-row"><div>3</div><div>BioBurst</div><div><span class="rank-badge plat">Platinum</span></div><div>1210</div></div>
-          <div class="board-row"><div>4</div><div>Quantikid</div><div><span class="rank-badge gold">Gold</span></div><div>980</div></div>
-          <div class="board-row"><div>5</div><div>ChemChamp</div><div><span class="rank-badge silver">Silver</span></div><div>720</div></div>
         </div>
       </div>
     </section>
 
-    <section id="profile" class="view">
-      <div class="profile-card glass-panel">
-        <h2 class="section-title">Your Profile</h2>
-        <div class="profile-line">
-          <label>Name</label>
-          <input id="profile-name" type="text" class="glass-input" />
-          <button id="save-profile-name" class="btn primary">Save</button>
+    <section id="ranks" class="view-panel">
+      <div class="glass-panel max-w-xl mx-auto">
+        <div class="view-header">
+          <h2>Ranking Hierarchy</h2>
+          <p>Progression milestones calculated purely from accuracy, speed, and volumetric metrics.</p>
         </div>
-        <div class="profile-line">
-          <label>Current Rank</label>
-          <span id="profile-rank" class="rank-badge">Bronze</span>
+        <div class="tier-list">
+          <div class="tier-row"><span class="badge-tier tier-bronze">Bronze</span><p>Initial placement rank assigned upon session initialization.</p></div>
+          <div class="tier-row"><span class="badge-tier tier-silver">Silver</span><p>Demonstrates established foundational understanding.</p></div>
+          <div class="tier-row"><span class="badge-tier tier-gold">Gold</span><p>Maintains consistent high accuracy metrics across multiple runs.</p></div>
+          <div class="tier-row"><span class="badge-tier tier-plat">Platinum</span><p>Advanced standing, highlighting rapid resolution speeds.</p></div>
+          <div class="tier-row"><span class="badge-tier tier-diamond">Diamond</span><p>Elite bracket with highly optimized evaluation success.</p></div>
+          <div class="tier-row"><span class="badge-tier tier-master">Master</span><p>Peak rating. Flawless pacing and near-perfect consistency.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="leaderboard" class="view-panel">
+      <div class="glass-panel max-w-xl mx-auto">
+        <div class="view-header">
+          <h2>Global Leaderboard</h2>
+          <p>Simulated telemetry representing real-time ranking distributions.</p>
+        </div>
+        <div class="table-container">
+          <div class="table-row table-th">
+            <div>Rank</div><div>Candidate</div><div>Tier</div><div>Rating</div>
+          </div>
+          <div class="table-row"><div>1</div><div class="fw-500">AstralAce</div><div><span class="badge-tier tier-master">Master</span></div><div class="text-right monospace">1980</div></div>
+          <div class="table-row"><div>2</div><div class="fw-500">NitroNova</div><div><span class="badge-tier tier-diamond">Diamond</span></div><div class="text-right monospace">1540</div></div>
+          <div class="table-row"><div>3</div><div class="fw-500">BioBurst</div><div><span class="badge-tier tier-plat">Platinum</span></div><div class="text-right monospace">1210</div></div>
+          <div class="table-row"><div>4</div><div class="fw-500">Quantikid</div><div><span class="badge-tier tier-gold">Gold</span></div><div class="text-right monospace">980</div></div>
+          <div class="table-row"><div>5</div><div class="fw-500">ChemChamp</div><div><span class="badge-tier tier-silver">Silver</span></div><div class="text-right monospace">720</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="profile" class="view-panel">
+      <div class="glass-panel max-w-xl mx-auto">
+        <div class="view-header">
+          <h2>Identity Configuration</h2>
+          <p>Manage local storage records and audit structural benchmarks.</p>
         </div>
         
-        <div class="profile-stats glass-inner mt-3">
-          <div class="stat"><div class="stat-label">Quizzes</div><div id="p-quizzes" class="stat-value">0</div></div>
-          <div class="stat"><div class="stat-label">Questions</div><div id="p-questions" class="stat-value">0</div></div>
-          <div class="stat"><div class="stat-label">Correct</div><div id="p-correct" class="stat-value">0</div></div>
-          <div class="stat"><div class="stat-label">Accuracy</div><div id="p-accuracy" class="stat-value">0%</div></div>
-          <div class="stat"><div class="stat-label">Wins</div><div id="p-wins" class="stat-value">0</div></div>
-          <div class="stat"><div class="stat-label">Win Rate</div><div id="p-winrate" class="stat-value">0%</div></div>
-          <div class="stat"><div class="stat-label">Score</div><div id="p-score" class="stat-value text-gradient">0</div></div>
+        <div class="profile-editor">
+          <div class="input-group">
+            <label for="profile-name">Display Name</label>
+            <div class="input-action-row">
+              <input id="profile-name" type="text" class="modern-input" />
+              <button id="save-profile-name" class="btn btn-primary">Update</button>
+            </div>
+          </div>
+          
+          <div class="meta-display-row">
+            <span class="meta-label">Calculated Standing:</span>
+            <span id="profile-rank" class="badge-tier tier-bronze">Bronze</span>
+          </div>
         </div>
-        <p class="muted mt-2">Score is a local metric for rank progression.</p>
+
+        <div class="profile-stats-card mt-4">
+          <div class="nested-grid">
+            <div class="mini-stat"><span>Quizzes</span><strong id="p-quizzes">0</strong></div>
+            <div class="mini-stat"><span>Questions</span><strong id="p-questions">0</strong></div>
+            <div class="mini-stat"><span>Correct</span><strong id="p-correct">0</strong></div>
+            <div class="mini-stat"><span>Accuracy</span><strong id="p-accuracy">0%</strong></div>
+            <div class="mini-stat"><span>Wins</span><strong id="p-wins">0</strong></div>
+            <div class="mini-stat"><span>Win Rate</span><strong id="p-winrate">0%</strong></div>
+          </div>
+          <div class="score-footer mt-4">
+            <span>Aggregated Score Index:</span>
+            <strong id="p-score" class="monospace text-gradient">0</strong>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section id="quiz" class="view">
-      <div class="quiz-header glass-panel">
-        <div class="crumbs"><span id="quiz-mode-label" class="badge">Mode</span> <span id="quiz-subject-label" class="badge outline">Subject</span></div>
-        <div class="timer" id="quiz-timer">--:--</div>
-      </div>
-
-      <div id="versus-bar" class="versus hidden glass-panel mt-3">
-        <div class="vs-item you">
-          <div class="vs-label">You</div>
-          <div class="vs-score"><span id="you-score">0</span>/10</div>
-        </div>
-        <div class="vs-divider">VS</div>
-        <div class="vs-item bot">
-          <div class="vs-label">Bot</div>
-          <div class="vs-score"><span id="bot-score">0</span>/10</div>
-        </div>
-      </div>
-
-      <div id="question-card" class="question-card glass-panel mt-3">
-        <div class="q-progress-container">
-          <div id="q-progress" class="q-progress">Question 1 of 10</div>
-          <div class="progress-bar"><div id="q-progress-fill" class="progress-fill"></div></div>
-        </div>
-        <div id="q-text" class="q-text">...</div>
-        <div id="q-options" class="q-options"></div>
-        <div class="q-actions mt-4">
-          <button id="next-btn" class="btn primary w-full" disabled>Next Question</button>
-          <button id="finish-btn" class="btn danger w-full hidden">Finish Quiz</button>
-        </div>
-      </div>
-
-      <div id="result-card" class="result-card glass-panel mt-3 hidden">
-        <div class="result-icon">🏆</div>
-        <h3 id="result-title" class="text-gradient">Results</h3>
-        <p id="result-detail" class="muted"></p>
+    <section id="quiz" class="view-panel">
+      <div class="quiz-layout">
         
-        <div class="result-stats glass-inner mt-3">
-          <div class="r-stat">
-            <span class="r-label">Your Correct</span>
-            <span id="result-you" class="r-value text-success">0</span>
+        <div class="quiz-meta-bar glass-panel">
+          <div class="meta-left">
+            <span id="quiz-mode-label" class="pill-tag">Mode</span>
+            <span id="quiz-subject-label" class="pill-tag secondary">Subject</span>
           </div>
-          <div class="r-stat vs-only">
-            <span class="r-label">Bot Correct</span>
-            <span id="result-bot" class="r-value text-danger">0</span>
+          <div id="quiz-timer" class="timer-countdown monospace">--:--</div>
+        </div>
+
+        <div id="versus-bar" class="versus-arena hidden glass-panel">
+          <div class="vs-lane player-lane">
+            <div class="lane-label">You</div>
+            <div class="lane-score"><span id="you-score">0</span> <small>/10</small></div>
           </div>
-          <div class="r-stat">
-            <span class="r-label">Time</span>
-            <span id="result-time" class="r-value">0:00</span>
+          <div class="vs-indicator">VS</div>
+          <div class="vs-lane bot-lane">
+            <div class="lane-label">Automated System</div>
+            <div class="lane-score"><span id="bot-score">0</span> <small>/10</small></div>
           </div>
         </div>
-        
-        <div class="result-actions mt-4">
-          <button id="play-again" class="btn primary">Play Again</button>
-          <button class="btn glass-button" data-view="home">Back to Home</button>
+
+        <div id="question-card" class="question-wrapper glass-panel">
+          <div class="progress-segment">
+            <div class="progress-info">
+              <span id="q-progress">Question 1 of 10</span>
+            </div>
+            <div class="progress-track">
+              <div id="q-progress-fill" class="progress-bar-fill"></div>
+            </div>
+          </div>
+
+          <h3 id="q-text" class="question-prompt">Loading evaluation parameters...</h3>
+          
+          <div id="q-options" class="options-container">
+            </div>
+
+          <div class="action-footer mt-4">
+            <button id="next-btn" class="btn btn-primary w-full" disabled>Next Question</button>
+            <button id="finish-btn" class="btn btn-danger w-full hidden">Finalize Evaluation</button>
+          </div>
         </div>
+
+        <div id="result-card" class="result-wrapper glass-panel hidden">
+          <div class="result-header">
+            <div class="success-icon-wrapper">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <h3 id="result-title" class="text-gradient">Session Concluded</h3>
+            <p id="result-detail">Performance processing complete.</p>
+          </div>
+
+          <div class="result-metrics-grid">
+            <div class="metric-tile">
+              <span class="tile-label">Correct Submissions</span>
+              <span id="result-you" class="tile-number text-success">0</span>
+            </div>
+            <div class="metric-tile vs-only">
+              <span class="tile-label">System Performance</span>
+              <span id="result-bot" class="tile-number text-muted">0</span>
+            </div>
+            <div class="metric-tile">
+              <span class="tile-label">Elapsed Time</span>
+              <span id="result-time" class="tile-number monospace">0:00</span>
+            </div>
+          </div>
+
+          <div class="result-actions mt-5">
+            <button id="play-again" class="btn btn-primary">Reset Session</button>
+            <button class="btn btn-secondary" data-view="home">Return to Dashboard</button>
+          </div>
+        </div>
+
       </div>
     </section>
+
   </main>
 
   <script src="app.js"></script>
