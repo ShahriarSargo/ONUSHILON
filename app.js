@@ -12,13 +12,14 @@
     competitiveMatches: 0,
   };
 
+  // Match the CSS variables
   const SUBJECT_COLORS = {
-    physics: '#69c1ff',   // light blue
-    chemistry: '#b69cff', // light purple
-    biology: '#84d993',   // light green
+    physics: '#38bdf8',   
+    chemistry: '#c084fc', 
+    biology: '#4ade80',   
   };
 
-  // Simple question banks (12 each, pick 10)
+  // Question Banks (12 each)
   const BANK = {
     physics: [
       q('What is the SI unit of force?', ['Joule', 'Newton', 'Watt', 'Pascal'], 1),
@@ -66,10 +67,10 @@
 
   function q(text, options, correctIndex){ return { text, options, correctIndex }; }
 
-  // State
+  // App State
   const state = {
     view: 'home',
-    mode: null, // 'casual' | 'timed' | 'competitive'
+    mode: null,
     subject: null,
     questionList: [],
     answers: [],
@@ -78,7 +79,7 @@
     startTime: 0,
     endTime: 0,
     finishedTime: null,
-    running: false, // game loop flag
+    running: false, 
     bot: {
       active: false,
       plan: [],
@@ -88,7 +89,7 @@
     }
   };
 
-  // Elements
+  // DOM Elements
   const $ = sel => document.querySelector(sel);
   const $$ = sel => document.querySelectorAll(sel);
 
@@ -96,18 +97,9 @@
   const nameInput = $('#name-input');
   const saveNameBtn = $('#save-name');
   const skipNameBtn = $('#skip-name');
-
   const subjectModal = $('#subject-modal');
   const cancelSubjectBtn = $('#cancel-subject');
-
   const tabButtons = $$('.tab-btn');
-  const profileChip = $('#profile-chip');
-
-  const homeView = $('#home');
-  const ranksView = $('#ranks');
-  const leaderboardView = $('#leaderboard');
-  const profileView = $('#profile');
-  const quizView = $('#quiz');
 
   const chipName = $('#chip-name');
   const chipRank = $('#chip-rank');
@@ -126,8 +118,7 @@
   const pWins = $('#p-wins');
   const pWinrate = $('#p-winrate');
   const pScore = $('#p-score');
-  const saveProfileNameBtn = $('#save-profile-name');
-
+  
   const quizModeLabel = $('#quiz-mode-label');
   const quizSubjectLabel = $('#quiz-subject-label');
   const quizTimer = $('#quiz-timer');
@@ -136,6 +127,7 @@
   const botScore = $('#bot-score');
 
   const qProgress = $('#q-progress');
+  const qProgressFill = $('#q-progress-fill');
   const qText = $('#q-text');
   const qOptions = $('#q-options');
   const nextBtn = $('#next-btn');
@@ -147,28 +139,17 @@
   const resultYou = $('#result-you');
   const resultBot = $('#result-bot');
   const resultTime = $('#result-time');
-  const playAgainBtn = $('#play-again');
 
-  // Stats
+  // Stats Logic
   function loadStats(){
     const s = localStorage.getItem(LS_KEYS.stats);
     return s ? { ...DEFAULT_STATS, ...JSON.parse(s) } : { ...DEFAULT_STATS };
   }
-  function saveStats(stats){
-    localStorage.setItem(LS_KEYS.stats, JSON.stringify(stats));
-  }
-  function getName(){
-    return localStorage.getItem(LS_KEYS.name) || '';
-  }
-  function setName(n){
-    localStorage.setItem(LS_KEYS.name, n);
-  }
+  function saveStats(stats){ localStorage.setItem(LS_KEYS.stats, JSON.stringify(stats)); }
+  function getName(){ return localStorage.getItem(LS_KEYS.name) || ''; }
+  function setName(n){ localStorage.setItem(LS_KEYS.name, n); }
 
-  function computeScore(stats){
-    // Local score for rank progression
-    // Conservative weighting to reduce variance
-    return stats.wins * 100 + stats.totalCorrect * 2 + stats.totalQuizzes * 5;
-  }
+  function computeScore(stats){ return stats.wins * 100 + stats.totalCorrect * 2 + stats.totalQuizzes * 5; }
   function computeRank(stats){
     const score = computeScore(stats);
     if (score >= 1500) return 'Master';
@@ -178,38 +159,22 @@
     if (score >= 200)  return 'Silver';
     return 'Bronze';
   }
-
-  function accuracy(stats){
-    if (stats.totalQuestions === 0) return 0;
-    return Math.round((stats.totalCorrect / stats.totalQuestions) * 100);
-  }
-  function winRate(stats){
-    if (stats.competitiveMatches === 0) return 0;
-    return Math.round((stats.wins / stats.competitiveMatches) * 100);
-    }
+  function accuracy(stats){ return stats.totalQuestions === 0 ? 0 : Math.round((stats.totalCorrect / stats.totalQuestions) * 100); }
+  function winRate(stats){ return stats.competitiveMatches === 0 ? 0 : Math.round((stats.wins / stats.competitiveMatches) * 100); }
 
   function updateAccent(subject){
     const root = document.documentElement;
-    const color = SUBJECT_COLORS[subject] || '#69c1ff';
+    const color = SUBJECT_COLORS[subject] || '#38bdf8';
     root.style.setProperty('--accent', color);
-    root.style.setProperty('--accent-weak', colorMix(color, 20));
+    
+    // Convert hex to rgba for the glow effect
+    let r = parseInt(color.slice(1, 3), 16),
+        g = parseInt(color.slice(3, 5), 16),
+        b = parseInt(color.slice(5, 7), 16);
+    root.style.setProperty('--accent-glow', `rgba(${r}, ${g}, ${b}, 0.4)`);
   }
 
-  // Very small color-mix fallback for older browsers
-  function colorMix(hex, pct){
-    // Blend with white by pct%
-    const c = hex.replace('#','');
-    const r = parseInt(c.substring(0,2),16);
-    const g = parseInt(c.substring(2,4),16);
-    const b = parseInt(c.substring(4,6),16);
-    const nr = Math.round(r + (255 - r) * (pct/100));
-    const ng = Math.round(g + (255 - g) * (pct/100));
-    const nb = Math.round(b + (255 - b) * (pct/100));
-    return `#${toHex(nr)}${toHex(ng)}${toHex(nb)}`;
-  }
-  function toHex(n){ return n.toString(16).padStart(2,'0'); }
-
-  // View handling
+  // Views & Routing
   function showView(id){
     state.view = id;
     $$('.view').forEach(v => v.classList.remove('visible'));
@@ -219,7 +184,6 @@
     if (id === 'home') renderHomeStats();
   }
 
-  // Home stats
   function renderHomeStats(){
     const stats = loadStats();
     statQuizzes.textContent = stats.totalQuizzes;
@@ -228,13 +192,12 @@
     statWinrate.textContent = `${winRate(stats)}%`;
   }
 
-  // Profile
   function renderProfile(){
     const stats = loadStats();
     profileNameInput.value = getName() || 'Shahriar';
     const r = computeRank(stats);
     profileRank.textContent = r;
-    profileRank.className = `rank-badge ${rankClass(r)}`;
+    profileRank.className = `rank-badge ${r.toLowerCase()}`;
     pQuizzes.textContent = stats.totalQuizzes;
     pQuestions.textContent = stats.totalQuestions;
     pCorrect.textContent = stats.totalCorrect;
@@ -244,25 +207,17 @@
     pScore.textContent = computeScore(stats);
   }
 
-  function rankClass(r){
-    const map = { Silver:'silver', Gold:'gold', Platinum:'plat', Diamond:'diamond', Master:'master' };
-    return map[r] || '';
-  }
-
-  // Profile chip
   function updateChip(){
     const stats = loadStats();
-    const name = getName() || 'Shahriar';
-    chipName.textContent = name;
+    chipName.textContent = getName() || 'Shahriar';
     const r = computeRank(stats);
     chipRank.textContent = r;
-    chipRank.className = `rank-badge ${rankClass(r)}`;
+    chipRank.className = `rank-badge ${r.toLowerCase()}`;
   }
 
-  // Quiz
+  // Quiz Engine
   function startMode(mode){
     state.mode = mode;
-    // pick subject
     subjectModal.classList.add('visible');
   }
 
@@ -274,7 +229,6 @@
   }
 
   function beginQuiz(){
-    // Reset
     state.questionList = pickQuestions(state.subject, 10);
     state.answers = new Array(state.questionList.length).fill(null);
     state.currentIndex = 0;
@@ -288,11 +242,9 @@
     state.startTime = now;
     state.endTime = timed ? now + 5 * 60 * 1000 : 0;
 
-    // UI labels
     quizModeLabel.textContent = modeLabel(state.mode);
     quizSubjectLabel.textContent = capitalize(state.subject);
 
-    // Show quiz view
     showView('quiz');
     resultCard.classList.add('hidden');
     $('#question-card').classList.remove('hidden');
@@ -300,38 +252,22 @@
     youScore.textContent = '0';
     botScore.textContent = '0';
 
-    // Setup bot plan (simple)
-    if (state.mode === 'competitive'){
-      state.bot.plan = makeBotPlan(now);
-    }
+    if (state.mode === 'competitive') state.bot.plan = makeBotPlan(now);
 
     renderQuestion();
     startLoop();
   }
 
-  function makeBotPlan(startMs){
-    const profiles = [
-      { name:'fast', min:8000, max:12000, pCorrect:0.6 },
-      { name:'medium', min:12000, max:18000, pCorrect:0.7 },
-      { name:'slow', min:18000, max:25000, pCorrect:0.8 },
-    ];
-    const prof = profiles[Math.floor(Math.random() * profiles.length)];
-    const events = [];
-    let t = startMs + rand(prof.min, prof.max);
-    for (let i=0;i<10;i++){
-      const correct = Math.random() < prof.pCorrect;
-      events.push({ at: t, correct });
-      t += rand(prof.min, prof.max);
-    }
-    return events;
-  }
-
   function renderQuestion(){
     const idx = state.currentIndex;
     const q = state.questionList[idx];
+    
     qProgress.textContent = `Question ${idx+1} of ${state.questionList.length}`;
+    qProgressFill.style.width = `${((idx) / state.questionList.length) * 100}%`;
+    
     qText.textContent = q.text;
     qOptions.innerHTML = '';
+    
     q.options.forEach((op, i) => {
       const btn = document.createElement('button');
       btn.className = 'q-option';
@@ -341,21 +277,29 @@
     });
 
     nextBtn.disabled = true;
-    finishBtn.classList.toggle('hidden', idx !== state.questionList.length - 1);
+    
+    if(idx === state.questionList.length - 1) {
+       nextBtn.classList.add('hidden');
+       finishBtn.classList.remove('hidden');
+    } else {
+       nextBtn.classList.remove('hidden');
+       finishBtn.classList.add('hidden');
+    }
   }
 
   function onSelectOption(choice){
     if (!state.running) return;
     const idx = state.currentIndex;
-    if (state.answers[idx] !== null) return; // locked
+    if (state.answers[idx] !== null) return; 
+    
     state.answers[idx] = choice;
 
-    // Mark selection
+    // Lock options
     [...qOptions.children].forEach((btn, i) => {
+      btn.classList.add('locked');
       btn.classList.toggle('selected', i === choice);
     });
 
-    // If casual, reveal correctness instantly for feedback
     if (state.mode === 'casual'){
       const q = state.questionList[idx];
       [...qOptions.children].forEach((btn, i) => {
@@ -365,6 +309,7 @@
     }
 
     nextBtn.disabled = false;
+    finishBtn.disabled = false;
   }
 
   function nextQuestion(){
@@ -373,22 +318,18 @@
       state.currentIndex++;
       renderQuestion();
     }
-    // Update finish button visibility
-    finishBtn.classList.toggle('hidden', state.currentIndex !== state.questionList.length - 1);
   }
 
   function finishQuiz(reason='finished'){
     if (!state.running) return;
     state.running = false;
-    // Calculate user correct
+    
+    qProgressFill.style.width = `100%`;
+
     const answered = state.answers.filter(a => a !== null).length;
-    state.correctCount = state.answers.reduce((sum, a, i) => {
-      if (a === null) return sum;
-      return sum + (a === state.questionList[i].correctIndex ? 1 : 0);
-    }, 0);
+    state.correctCount = state.answers.reduce((sum, a, i) => sum + (a === state.questionList[i].correctIndex ? 1 : 0), 0);
     const now = Date.now();
     const timeUsedMs = now - state.startTime;
-    // If user answered all, set finished time
     if (answered === state.questionList.length) state.finishedTime = now;
 
     let title = 'Quiz Complete';
@@ -398,87 +339,68 @@
     let bot = 0;
 
     if (state.mode === 'competitive'){
-      // Lock in bot up to now or until last plan event before end
       processBotEvents(now, true);
       bot = state.bot.correctCount;
 
-      // Decide winner
       let outcome = 'draw';
       if (you > bot) outcome = 'win';
       else if (you < bot) outcome = 'lose';
-      else {
-        // Tie: if both finished all 10, earlier finisher wins; otherwise draw
-        if (state.finishedTime && state.bot.finishedTime){
-          if (state.finishedTime < state.bot.finishedTime) outcome = 'win';
-          else if (state.finishedTime > state.bot.finishedTime) outcome = 'lose';
-          else outcome = 'draw';
-        } else {
-          outcome = 'draw';
-        }
+      else if (state.finishedTime && state.bot.finishedTime) {
+        outcome = state.finishedTime < state.bot.finishedTime ? 'win' : (state.finishedTime > state.bot.finishedTime ? 'lose' : 'draw');
       }
 
       if (outcome === 'win'){ title = 'Victory!'; detail = 'You outscored the bot.'; }
       else if (outcome === 'lose'){ title = 'Defeat'; detail = 'The bot scored higher.'; }
-      else { title = 'It’s a tie'; detail = 'Scores were equal.'; }
+      else { title = 'Tie Game'; detail = 'Scores were equal.'; }
 
-      // Update stats
       const stats = loadStats();
-      stats.totalQuizzes += 1;
+      stats.totalQuizzes++;
       stats.totalQuestions += answered;
       stats.totalCorrect += you;
-      stats.competitiveMatches += 1;
-      if (you > bot) stats.wins += 1;
-      else if (you === bot && state.finishedTime && state.bot.finishedTime && state.finishedTime < state.bot.finishedTime) {
-        // tie-breaker win if both finished and you were faster
-        stats.wins += 1;
-      }
+      stats.competitiveMatches++;
+      if (outcome === 'win') stats.wins++;
       saveStats(stats);
+      
     } else {
-      // Casual or Timed
       const stats = loadStats();
-      stats.totalQuizzes += 1;
+      stats.totalQuizzes++;
       stats.totalQuestions += answered;
       stats.totalCorrect += you;
       saveStats(stats);
       detail = state.mode === 'timed' ? 'Timed challenge complete.' : 'Practice session complete.';
     }
 
-    // Show result
     $('#question-card').classList.add('hidden');
     resultCard.classList.remove('hidden');
+    
     resultTitle.textContent = title;
     resultDetail.textContent = detail;
     resultYou.textContent = you;
     resultBot.textContent = state.mode === 'competitive' ? state.bot.correctCount : 0;
-    resultCard.querySelectorAll('.vs-only').forEach(el => el.style.display = showVs ? '' : 'none');
+    document.querySelectorAll('.vs-only').forEach(el => el.style.display = showVs ? '' : 'none');
     resultTime.textContent = fmtTime(timeUsedMs);
 
-    // Update top chip + home stats
     updateChip();
     renderHomeStats();
   }
 
-  // Loop (single source of truth)
+  // Animation Loop / Bot simulation
   function startLoop(){
     function loop(){
       if (!state.running) return;
       const now = Date.now();
 
-      // Timer
       if (state.mode === 'timed' || state.mode === 'competitive'){
         const left = Math.max(0, state.endTime - now);
         quizTimer.textContent = fmtTime(left);
-        if (left <= 0){
-          finishQuiz('timeout');
-          return;
-        }
+        if (left <= 0) return finishQuiz('timeout');
       } else {
         quizTimer.textContent = '—';
       }
 
-      // Bot
-      if (state.mode === 'competitive'){
+      if (state.mode === 'competitive') {
         processBotEvents(now, false);
+        youScore.textContent = state.correctCount; // Realtime updating might feel cooler
       }
 
       requestAnimationFrame(loop);
@@ -492,9 +414,8 @@
     while (state.bot.nextEventIndex < plan.length){
       const ev = plan[state.bot.nextEventIndex];
       if (!flushAll && ev.at > now) break;
-      // Ignore events that land after endTime (time-out)
       if (ev.at <= state.endTime){
-        if (ev.correct) state.bot.correctCount += 1;
+        if (ev.correct) state.bot.correctCount++;
         if (state.bot.nextEventIndex === plan.length - 1) state.bot.finishedTime = ev.at;
       }
       state.bot.nextEventIndex++;
@@ -502,32 +423,35 @@
     botScore.textContent = state.bot.correctCount.toString();
   }
 
+  function makeBotPlan(startMs){
+    const profiles = [
+      { min:8000, max:12000, pCorrect:0.6 },
+      { min:12000, max:18000, pCorrect:0.7 },
+      { min:18000, max:25000, pCorrect:0.8 },
+    ];
+    const prof = profiles[Math.floor(Math.random() * profiles.length)];
+    const events = [];
+    let t = startMs + rand(prof.min, prof.max);
+    for (let i=0;i<10;i++){
+      events.push({ at: t, correct: Math.random() < prof.pCorrect });
+      t += rand(prof.min, prof.max);
+    }
+    return events;
+  }
+
+  // Helpers
   function pickQuestions(subject, count){
-    const bank = BANK[subject] || [];
-    const arr = bank.slice();
-    shuffle(arr);
+    const arr = (BANK[subject] || []).slice();
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
     return arr.slice(0, count);
   }
 
-  function shuffle(a){
-    for (let i=a.length-1; i>0; i--){
-      const j = Math.floor(Math.random() * (i+1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-  }
-
-  function rand(min, max){
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
-  function modeLabel(m){
-    if (m === 'casual') return 'Casual';
-    if (m === 'timed') return 'Solo Timed';
-    if (m === 'competitive') return 'Competitive vs Bot';
-    return 'Mode';
-  }
+  function rand(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
+  function modeLabel(m){ return m === 'casual' ? 'Casual' : (m === 'timed' ? 'Solo Timed' : 'Competitive vs Bot'); }
   function capitalize(s){ return s ? s[0].toUpperCase() + s.slice(1) : s; }
-
   function fmtTime(ms){
     const total = Math.max(0, Math.floor(ms/1000));
     const m = Math.floor(total / 60);
@@ -535,34 +459,24 @@
     return `${m}:${s}`;
   }
 
-  // Events
+  // Event Listeners
   document.addEventListener('click', (e) => {
-    const t = e.target;
-    if (t.classList.contains('tab-btn')){
-      showView(t.dataset.view);
-    }
+    const t = e.target.closest('button, a, .tab-btn, .start-mode, .subject-card');
+    if(!t) return;
+
+    if (t.classList.contains('tab-btn')) showView(t.dataset.view);
     if (t.dataset.view === 'profile') showView('profile');
     if (t.dataset.view === 'home') showView('home');
+    if (t.dataset.view === 'leaderboard') showView('leaderboard');
+    if (t.dataset.view === 'ranks') showView('ranks');
 
-    if (t.classList.contains('start-mode')){
-      startMode(t.dataset.mode);
-    }
-
-    if (t.classList.contains('subject-card')){
-      selectSubject(t.dataset.subject);
-    }
-
-    if (t.id === 'cancel-subject'){
-      subjectModal.classList.remove('visible');
-    }
-
-    if (t.id === 'next-btn'){
-      nextQuestion();
-    }
-
-    if (t.id === 'finish-btn'){
-      finishQuiz('finished');
-    }
+    if (t.classList.contains('start-mode')) startMode(t.dataset.mode);
+    if (t.classList.contains('subject-card')) selectSubject(t.dataset.subject);
+    
+    if (t.id === 'cancel-subject') subjectModal.classList.remove('visible');
+    if (t.id === 'next-btn') nextQuestion();
+    if (t.id === 'finish-btn') finishQuiz('finished');
+    if (t.id === 'play-again') startMode(state.mode || 'casual');
 
     if (t.id === 'save-profile-name'){
       const newName = profileNameInput.value.trim();
@@ -571,21 +485,15 @@
         updateChip();
       }
     }
-
-    if (t.id === 'play-again'){
-      // restart same mode with subject select
-      startMode(state.mode || 'casual');
-    }
   });
 
   saveNameBtn.addEventListener('click', () => {
-    const v = nameInput.value.trim();
-    const name = v || 'Shahriar';
-    setName(name);
+    setName(nameInput.value.trim() || 'Shahriar');
     updateChip();
     nameOverlay.classList.remove('visible');
     showView('home');
   });
+
   skipNameBtn.addEventListener('click', () => {
     setName('Shahriar');
     updateChip();
@@ -593,35 +501,13 @@
     showView('home');
   });
 
-  nextBtn.addEventListener('click', () => {
-    // Evaluate correctness increment when leaving question
-    tallyCurrentIfNeeded();
-    nextQuestion();
-  });
-
-  finishBtn.addEventListener('click', () => {
-    tallyCurrentIfNeeded();
-    finishQuiz('finished');
-  });
-
-  function tallyCurrentIfNeeded(){
-    const i = state.currentIndex;
-    const choice = state.answers[i];
-    if (choice === null) return;
-    // Nothing else to do here now (we tally at finish)
-  }
-
-  // Initialize
+  // Init
   function init(){
-    if (getName()){
-      nameOverlay.classList.remove('visible');
-    } else {
-      nameOverlay.classList.add('visible');
-    }
+    if (getName()) nameOverlay.classList.remove('visible');
+    else nameOverlay.classList.add('visible');
+    
     updateChip();
     renderHomeStats();
-
-    // Prefill profile name field
     profileNameInput.value = getName() || 'Shahriar';
   }
 
