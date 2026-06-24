@@ -12,14 +12,13 @@
     competitiveMatches: 0,
   };
 
-  // Match the CSS variables
+  // Re-calibrated colors matching our classy palette design theme overrides
   const SUBJECT_COLORS = {
-    physics: '#38bdf8',   
-    chemistry: '#c084fc', 
-    biology: '#4ade80',   
+    physics: '#60a5fa',   
+    chemistry: '#a78bfa', 
+    biology: '#34d399',   
   };
 
-  // Question Banks (12 each)
   const BANK = {
     physics: [
       q('What is the SI unit of force?', ['Joule', 'Newton', 'Watt', 'Pascal'], 1),
@@ -67,7 +66,7 @@
 
   function q(text, options, correctIndex){ return { text, options, correctIndex }; }
 
-  // App State
+  // Framework Structural Core State
   const state = {
     view: 'home',
     mode: null,
@@ -89,7 +88,7 @@
     }
   };
 
-  // DOM Elements
+  // DOM Node Bindings
   const $ = sel => document.querySelector(sel);
   const $$ = sel => document.querySelectorAll(sel);
 
@@ -140,7 +139,7 @@
   const resultBot = $('#result-bot');
   const resultTime = $('#result-time');
 
-  // Stats Logic
+  // Business Engine Utilities
   function loadStats(){
     const s = localStorage.getItem(LS_KEYS.stats);
     return s ? { ...DEFAULT_STATS, ...JSON.parse(s) } : { ...DEFAULT_STATS };
@@ -162,22 +161,22 @@
   function accuracy(stats){ return stats.totalQuestions === 0 ? 0 : Math.round((stats.totalCorrect / stats.totalQuestions) * 100); }
   function winRate(stats){ return stats.competitiveMatches === 0 ? 0 : Math.round((stats.wins / stats.competitiveMatches) * 100); }
 
+  // Sophisticated Theme Modification Engine via CSS runtime parameters
   function updateAccent(subject){
     const root = document.documentElement;
-    const color = SUBJECT_COLORS[subject] || '#38bdf8';
-    root.style.setProperty('--accent', color);
+    const color = SUBJECT_COLORS[subject] || '#6366f1';
+    root.style.setProperty('--accent-primary', color);
     
-    // Convert hex to rgba for the glow effect
     let r = parseInt(color.slice(1, 3), 16),
         g = parseInt(color.slice(3, 5), 16),
         b = parseInt(color.slice(5, 7), 16);
-    root.style.setProperty('--accent-glow', `rgba(${r}, ${g}, ${b}, 0.4)`);
+    root.style.setProperty('--accent-glow', `rgba(${r}, ${g}, ${b}, 0.1)`);
   }
 
-  // Views & Routing
+  // Routing Architectures
   function showView(id){
     state.view = id;
-    $$('.view').forEach(v => v.classList.remove('visible'));
+    $$('.view-panel').forEach(v => v.classList.remove('visible'));
     $(`#${id}`).classList.add('visible');
     tabButtons.forEach(b => b.classList.toggle('active', b.dataset.view === id));
     if (id === 'profile') renderProfile();
@@ -197,7 +196,7 @@
     profileNameInput.value = getName() || 'Shahriar';
     const r = computeRank(stats);
     profileRank.textContent = r;
-    profileRank.className = `rank-badge ${r.toLowerCase()}`;
+    profileRank.className = `badge-tier tier-${r.toLowerCase()}`;
     pQuizzes.textContent = stats.totalQuizzes;
     pQuestions.textContent = stats.totalQuestions;
     pCorrect.textContent = stats.totalCorrect;
@@ -212,10 +211,10 @@
     chipName.textContent = getName() || 'Shahriar';
     const r = computeRank(stats);
     chipRank.textContent = r;
-    chipRank.className = `rank-badge ${r.toLowerCase()}`;
+    chipRank.className = `badge-tier tier-${r.toLowerCase()}`;
   }
 
-  // Quiz Engine
+  // Quiz Engine Core Pipelines
   function startMode(mode){
     state.mode = mode;
     subjectModal.classList.add('visible');
@@ -281,6 +280,7 @@
     if(idx === state.questionList.length - 1) {
        nextBtn.classList.add('hidden');
        finishBtn.classList.remove('hidden');
+       finishBtn.disabled = true;
     } else {
        nextBtn.classList.remove('hidden');
        finishBtn.classList.add('hidden');
@@ -294,7 +294,6 @@
     
     state.answers[idx] = choice;
 
-    // Lock options
     [...qOptions.children].forEach((btn, i) => {
       btn.classList.add('locked');
       btn.classList.toggle('selected', i === choice);
@@ -332,7 +331,7 @@
     const timeUsedMs = now - state.startTime;
     if (answered === state.questionList.length) state.finishedTime = now;
 
-    let title = 'Quiz Complete';
+    let title = 'Evaluation Complete';
     let detail = '';
     let showVs = state.mode === 'competitive';
     let you = state.correctCount;
@@ -349,9 +348,9 @@
         outcome = state.finishedTime < state.bot.finishedTime ? 'win' : (state.finishedTime > state.bot.finishedTime ? 'lose' : 'draw');
       }
 
-      if (outcome === 'win'){ title = 'Victory!'; detail = 'You outscored the bot.'; }
-      else if (outcome === 'lose'){ title = 'Defeat'; detail = 'The bot scored higher.'; }
-      else { title = 'Tie Game'; detail = 'Scores were equal.'; }
+      if (outcome === 'win') { title = 'Victory Achieved'; detail = 'Your sequence outscored the system benchmark.'; }
+      else if (outcome === 'lose') { title = 'Benchmark Defeat'; detail = 'The automated system completed with a higher metric.'; }
+      else { title = 'Evaluation Split'; detail = 'Metric equivalence detected.'; }
 
       const stats = loadStats();
       stats.totalQuizzes++;
@@ -367,7 +366,7 @@
       stats.totalQuestions += answered;
       stats.totalCorrect += you;
       saveStats(stats);
-      detail = state.mode === 'timed' ? 'Timed challenge complete.' : 'Practice session complete.';
+      detail = state.mode === 'timed' ? 'Standardized timeline constraint processing finished.' : 'Practice parameters logged successfully.';
     }
 
     $('#question-card').classList.add('hidden');
@@ -384,7 +383,7 @@
     renderHomeStats();
   }
 
-  // Animation Loop / Bot simulation
+  // Animation Framework Sync Loop
   function startLoop(){
     function loop(){
       if (!state.running) return;
@@ -400,7 +399,7 @@
 
       if (state.mode === 'competitive') {
         processBotEvents(now, false);
-        youScore.textContent = state.correctCount; // Realtime updating might feel cooler
+        youScore.textContent = state.correctCount;
       }
 
       requestAnimationFrame(loop);
@@ -439,7 +438,7 @@
     return events;
   }
 
-  // Helpers
+  // Functional Helpers
   function pickQuestions(subject, count){
     const arr = (BANK[subject] || []).slice();
     for (let i = arr.length - 1; i > 0; i--) {
@@ -450,7 +449,7 @@
   }
 
   function rand(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
-  function modeLabel(m){ return m === 'casual' ? 'Casual' : (m === 'timed' ? 'Solo Timed' : 'Competitive vs Bot'); }
+  function modeLabel(m){ return m === 'casual' ? 'Casual' : (m === 'timed' ? 'Solo Timed' : 'Competitive Arena'); }
   function capitalize(s){ return s ? s[0].toUpperCase() + s.slice(1) : s; }
   function fmtTime(ms){
     const total = Math.max(0, Math.floor(ms/1000));
@@ -459,19 +458,17 @@
     return `${m}:${s}`;
   }
 
-  // Event Listeners
+  // Global Event Binding Structure
   document.addEventListener('click', (e) => {
-    const t = e.target.closest('button, a, .tab-btn, .start-mode, .subject-card');
+    const t = e.target.closest('button, .tab-btn, .start-mode, .subject-tile, .profile-pill');
     if(!t) return;
 
     if (t.classList.contains('tab-btn')) showView(t.dataset.view);
-    if (t.dataset.view === 'profile') showView('profile');
+    if (t.id === 'profile-chip' || t.dataset.view === 'profile') showView('profile');
     if (t.dataset.view === 'home') showView('home');
-    if (t.dataset.view === 'leaderboard') showView('leaderboard');
-    if (t.dataset.view === 'ranks') showView('ranks');
 
     if (t.classList.contains('start-mode')) startMode(t.dataset.mode);
-    if (t.classList.contains('subject-card')) selectSubject(t.dataset.subject);
+    if (t.classList.contains('subject-tile')) selectSubject(t.dataset.subject);
     
     if (t.id === 'cancel-subject') subjectModal.classList.remove('visible');
     if (t.id === 'next-btn') nextQuestion();
@@ -501,11 +498,12 @@
     showView('home');
   });
 
-  // Init
+  // Structural Initialization Execution Block
   function init(){
     if (getName()) nameOverlay.classList.remove('visible');
     else nameOverlay.classList.add('visible');
     
+    updateAccent('default');
     updateChip();
     renderHomeStats();
     profileNameInput.value = getName() || 'Shahriar';
